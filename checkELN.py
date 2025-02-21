@@ -172,31 +172,30 @@ def testValidator(iFile):
 
 
 if __name__ == '__main__':
-    st.title('Verify your .eln file')
-    st.write('There could be more text here')
+    col1, col2 = st.columns([0.7, 0.3])
+    col1.markdown('## Verify your .eln file')
+    col1.markdown('The ELN file format is an archive format for exchange of experimental results and data. '
+                  'This file format can be created and read by software such as Electronic Laboratory Notebooks. '
+                  'For more information visit [link](https://github.com/TheELNConsortium/TheELNFileFormat).\n\n'
+                  'Here you can easily verify the validity of each file.')
+    col2.image('logo-color-fade.png')
 
     uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
-        success0, output0 = testPypiROCrate(uploaded_file)
-        success1, output1 = testParamsMetadataJson(uploaded_file)
-        success2, output2 = testSchema(uploaded_file)
-        success3, output3 = testValidator(uploaded_file)
         st.markdown("# Test summary:")
-        st.markdown(("## Success:" if success0 else "## FAILURE:")+" Pypi RO-Crate")
-        st.markdown(("## Success:" if success1 else "## FAILURE:")+" Parameters Metadata Json")
-        st.markdown(("## Success:" if success2 else "## FAILURE:")+" Schema")
-        st.markdown(("## Success:" if success3 else "## FAILURE:")+" Validator")
-        if not success0 or not success1 or not success2 or not success3:
-            st.markdown("# Error output:")
-        if not success0:
-            st.markdown("## PyPi RO-Crate:")
-            st.code(output0)
-        if not success1:
-            st.markdown("## Parameters Metadata Json:")
-            st.markdown(output1)
-        if not success2:
-            st.markdown("## Schema:")
-            st.markdown(output2)
-        if not success3:
-            st.markdown("## Validator:")
-            st.markdown(output3)
+
+        success, output = testPypiROCrate(uploaded_file)
+        with st.expander(("Success:" if success else "FAILURE:")+" Pypi RO-Crate", icon='✅' if success else '❌'):
+            st.code('Success' if success else output)
+
+        success, output = testValidator(uploaded_file)
+        with st.expander(("Success:" if success else "FAILURE:")+" Validator", icon='✅' if success else '❌'):
+            st.code('Success' if success else output)
+
+        success, output = testParamsMetadataJson(uploaded_file)
+        with st.expander(("Success:" if success else "FAILURE:")+" Parameters Metadata Json", icon='✅' if success else '❌'):
+            st.code('Success' if success else output)
+
+        success, output = testSchema(uploaded_file)
+        with st.expander(("Success:" if success else "FAILURE:")+" Schema", icon='✅' if success else '❌'):
+            st.code('Success' if success else output)
